@@ -59,7 +59,7 @@ flowchart LR
     D --> C2[Extract discounted subtotal]
     D --> C3[Extract all negative discount/promotion/coupon entries above subtotal]
     C3 --> E[Calculate sum of absolute values of deduction]
-    C2 & E --> F[pre_deduction_total = subtotal + sum(abs(deduction))]
+    C2 & E --> F[pre_deduction_total = subtotal + sum of absolute values of deductions]
     C1 & F --> G[Output: paid amount, pre_deduction_total for one receipt]
     G --> H[Sum values across all receipts]
     H --> I[Return two final total HKD results]
