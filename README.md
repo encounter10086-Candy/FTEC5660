@@ -63,6 +63,7 @@ flowchart LR
     C1 & F --> G[Output: paid amount, pre_deduction_total for one receipt]
     G --> H[Sum values across all receipts]
     H --> I[Return two final total HKD results]
+```
 
-**SOLUTION DESCRIPTION**
+### **SOLUTION DESCRIPTION**
 This solution uses deepseek-v4-flash-vision-exp as the vision model. I take the list of receipt images from the public_test folder, read each image and convert it into base64 format as the model input. For every receipt, the model extracts key pieces of information: the final actual paid amount, the discounted subtotal printed on the receipt, and all negative deduction lines above the subtotal. Instead of summing every individual product's original price, the pre-deduction total is calculated by adding the discounted subtotal to the sum of absolute values of those negative deduction entries. The model outputs two decimal numbers for each receipt. These numbers are converted to Decimal type and sum over all receipts to produce the two final predicted HKD totals for the questions.
