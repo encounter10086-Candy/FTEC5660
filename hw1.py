@@ -68,7 +68,7 @@ def build_chain() -> Any:
     
     model=ChatDeepSeek(
         model="deepseek-v4-flash-vision-exp",
-    ）
+    )
         
     prompt=ChatPromptTemplate.from_messages([
         （"human", [
