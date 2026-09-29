@@ -79,11 +79,11 @@ def build_chain() -> Any:
             missing or misreading values.
             1. Find the total amount paid after discount and rounding for this receipt 
             (actual spent).
-            2.Then look at price values ABOVE the subtotal line. Collect ALL positive 
-            dollar values (values WITHOUT a minus sign "-"). Ignore any blank price lines.
-            Ignore all numbers with a minus sign (these are discounts). Sum all these 
-            collected positive numbers. This sum is the total price if NO discounts or 
-            coupons are applied at all.
+            2.Then calculate the total sum of all goods BEFORE any discount.
+            The subtotal printed on this receipt is already AFTER discount.
+            Calculate pre-discount total using this formula:
+            pre_discount_total=subtotal + sum of absolute values of all negative discount
+            entries that appear above the subtotal line on the receipt.
             Return ONLY two decimal numbers separated by comma.
             Format example: 102.30,107.70
             No extra words, no explanation, no HK$.
