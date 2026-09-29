@@ -55,7 +55,7 @@ flowchart LR
     A[List of receipt images from public_test folder] --> B[Read each image and encode to base64]
     B --> C[Vision prompt + deepseek-v4-flash-vision-exp]
     C --> D[Vision model reads single receipt]
-    D --> C1[Extract: actual paid amount(after rounding)]
+    D --> C1[Extract: actual paid amount after rounding]
     D --> C2[Extract discounted subtotal]
     D --> C3[Extract all negative discount/promotion/coupon entries above subtotal]
     C3 --> E[Calculate sum of absolute values of deduction]
