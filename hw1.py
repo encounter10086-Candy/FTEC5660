@@ -71,7 +71,7 @@ def build_chain() -> Any:
     )
         
     prompt=ChatPromptTemplate.from_messages([
-        （"human", [
+        ("human", [
             {"type": "text", "text": """
             You are a supermarket receipt calculator.
             Examine this single Hong Kong supermarket receipt image carefully.
