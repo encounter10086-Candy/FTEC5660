@@ -63,7 +63,37 @@ def build_chain() -> Any:
     ``deepseek-v4-flash-vision-exp``. The API key is loaded from .env.
     """
     ### YOUR CODE HERE
-    return None
+    from langchain_core.prompts import ChatPromptTemplate
+    from langchain_deepseek import ChatDeepSeek
+    
+    model=ChatDeepSeek(
+        model="deepseek-v4-flash-vision-exp",
+    ）
+        
+    prompt=ChatPromptTemplate.from_messages([
+        （"human", [
+            {"type": "text", "text": """
+            You are a supermarket receipt calculator.
+            Examine this single Hong Kong supermarket receipt image carefully.
+            Carefully read every line item price, double check all numbers to avoid
+            missing or misreading values.
+            1. Find the total amount paid after discount and rounding for this receipt 
+            (actual spent).
+            2.Then look at price values ABOVE the subtotal line. Collect ALL positive 
+            dollar values (values WITHOUT a minus sign "-"). Ignore any blank price lines.
+            Ignore all numbers with a minus sign (these are discounts). Sum all these 
+            collected positive numbers. This sum is the total price if NO discounts or 
+            coupons are applied at all.
+            Return ONLY two decimal numbers separated by comma.
+            Format example: 102.30,107.70
+            No extra words, no explanation, no HK$.
+            """},
+            {"type": "image_url", "image_url": {"url": "{image_url}"}}
+        ])
+    ])
+        
+    chain = prompt | model
+    return chain
 
 
 def answer_queries(chain: Any, images: list[Path]) -> dict[str, Any]:
@@ -79,8 +109,35 @@ def answer_queries(chain: Any, images: list[Path]) -> dict[str, Any]:
     to process independent receipt-extraction prompts in parallel.
     """
     ### YOUR CODE HERE
-    _ = (chain, images)
-    return {QUERY_1: DUMMY_RESPONSE, QUERY_2: DUMMY_RESPONSE}
+    import base64
+    import re
+    from decimal import Decimal
+
+    inputs=[]
+    for img_path in images:
+        with  open(img_path,"rb") as f:
+            img_bytes=f.read()
+        b64_str=base64.b64encode(img_bytes).decode("utf-8")
+        img_url=f"data:image/jpeg;base64,{b64_str}"
+        inputs.append({"image_url": img_url})
+
+    batch_outputs=chain.batch(inputs)
+    total_spent=Decimal("0.00")
+    total_no_discount=Decimal("0.00")
+
+    for output in batch_outputs:
+        raw_text=output.strip()
+        clean_text=re.sub(r"[^0-9,.]", "", raw_text)
+        paid_text, no_discount_text=clean_text.split(",")
+        paid_val=Decimal(paid_text)
+        no_discount_val=Decimal(no_discount_text)
+        total_spent+=paid_val
+        total_no_discount+=no_discount_val
+
+    return{
+        "How much money did I spend in total for these bills?": f"HK${total_spent:.2f}",
+        "How much would I have had to pay without the discount?": f"HK${total_no_discount:.2f}"
+    }
 
 
 # Everything below is provided runner/scoring code. No edits are needed.
