@@ -126,7 +126,7 @@ def answer_queries(chain: Any, images: list[Path]) -> dict[str, Any]:
     total_no_discount=Decimal("0.00")
 
     for output in batch_outputs:
-        raw_text=output.strip()
+        raw_text=output.content.strip()
         clean_text=re.sub(r"[^0-9,.]", "", raw_text)
         paid_text, no_discount_text=clean_text.split(",")
         paid_val=Decimal(paid_text)
